@@ -115,11 +115,11 @@ class MailService(ConfigService):
     @accepts(Dict(
         'mail-message',
         Str('subject'),
-        Str('text'),
+        Str('text', required=True),
         List('to', items=[Str('email')]),
         Int('interval'),
         Str('channel'),
-        Int('timeout'),
+        Int('timeout', default=300),
         Bool('queue', default=True),
     ))
     def send(self, message):
@@ -158,7 +158,7 @@ class MailService(ConfigService):
         if not to:
             to = [
                 self.middleware.call_sync(
-                    'user.query', [('username', '=', 'root')]
+                    'user.query', [('username', '=', 'root')], {'get': True}
                 )['email']
             ]
             if not to[0]:
