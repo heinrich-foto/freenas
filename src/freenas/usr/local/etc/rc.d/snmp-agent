@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# $FreeBSD$
+#
+
+# PROVIDE: snmp-agent
+# REQUIRE: snmpd
+
+. /etc/rc.subr
+
+start_command()
+{
+    /usr/local/bin/snmp-agent.sh >/dev/null 2>&1 &
+}
+
+stop_command()
+{
+	if [ -f /var/run/snmp-agent.pid ]; then
+		kill -TERM $(cat /var/run/snmp-agent.pid) >/dev/null 2>&1
+		rm /var/run/snmp-agent.pid
+	fi
+}
+
+name="ix-snmpd"
+start_cmd='start_command'
+stop_cmd='stop_command'
+
+load_rc_config $name
+run_rc_command "$1"
